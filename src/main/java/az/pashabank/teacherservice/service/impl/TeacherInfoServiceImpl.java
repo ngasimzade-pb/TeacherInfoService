@@ -3,8 +3,8 @@ package az.pashabank.teacherservice.service.impl;
 import az.pashabank.teacherservice.dao.entity.Message;
 import az.pashabank.teacherservice.dao.entity.TeacherEntity;
 import az.pashabank.teacherservice.dao.repository.TeacherInfoRepository;
-import az.pashabank.teacherservice.mapper.impl.TeacherInfoMapperImpl;
-import az.pashabank.teacherservice.model.dto.TeacherInfoDto;
+import az.pashabank.teacherservice.mapper.impl.TeacherMapperImpl;
+import az.pashabank.teacherservice.model.dto.TeacherDto;
 import az.pashabank.teacherservice.service.TeacherInfoService;
 import org.springframework.stereotype.Service;
 
@@ -21,36 +21,36 @@ import java.util.stream.Collectors;
 public class TeacherInfoServiceImpl implements TeacherInfoService {
 
     public TeacherInfoRepository teacherInfoRepository;
-    public TeacherInfoMapperImpl teacherInfoMapper;
+    public TeacherMapperImpl teacherInfoMapper;
 
     private final String SIGN = "@";
     private final String COUNTRY_CODE = ".az";
 
-    public TeacherInfoServiceImpl(TeacherInfoRepository teacherInfoRepository, TeacherInfoMapperImpl teacherInfoMapper) {
+    public TeacherInfoServiceImpl(TeacherInfoRepository teacherInfoRepository, TeacherMapperImpl teacherInfoMapper) {
         this.teacherInfoRepository = teacherInfoRepository;
         this.teacherInfoMapper = teacherInfoMapper;
     }
 
     @Override
-    public TeacherInfoDto save(TeacherInfoDto teacherInfoDto) {
+    public TeacherDto save(TeacherDto teacherInfoDto) {
 
         Long code = generateTeacherCode(teacherInfoDto);
         teacherInfoDto.setEmail(generateMail(teacherInfoDto, code));
 
-        TeacherEntity teacherEntity = teacherInfoMapper.teacherInfoDtoToTeacherEntity(teacherInfoDto, code);
+        TeacherEntity teacherEntity = teacherInfoMapper.teacherDtoToTeacherEntity(teacherInfoDto, code);
         teacherEntity = teacherInfoRepository.save(teacherEntity);
 
-        return teacherInfoMapper.teacherEntityToTeacherInfoDto(teacherEntity);
+        return teacherInfoMapper.teacherEntityToTeacherDto(teacherEntity);
     }
 
     @Override
-    public Long generateTeacherCode(TeacherInfoDto teacherInfoDto) {
+    public Long generateTeacherCode(TeacherDto teacherInfoDto) {
 
         return ThreadLocalRandom.current().nextLong(0, 999999);
     }
 
     @Override
-    public String generateMail(TeacherInfoDto teacherInfoDto, Long teacherCode) {
+    public String generateMail(TeacherDto teacherInfoDto, Long teacherCode) {
 
         String mail = String.valueOf(teacherInfoDto.getName().toLowerCase().charAt(0))
                                         .concat(teacherInfoDto.getSurname().toLowerCase()
@@ -64,10 +64,10 @@ public class TeacherInfoServiceImpl implements TeacherInfoService {
     }
 
     @Override
-    public List<TeacherInfoDto> getAll() {
+    public List<TeacherDto> getAll() {
 
         return teacherInfoRepository.findAll().stream()
-                .map(teacherInfoMapper::teacherEntityToTeacherInfoDto)
+                .map(teacherInfoMapper::teacherEntityToTeacherDto)
                 .collect(Collectors.toList());
     }
 
@@ -78,21 +78,21 @@ public class TeacherInfoServiceImpl implements TeacherInfoService {
     }
 
     @Override
-    public TeacherInfoDto findByTeacherCode(Long code) {
+    public TeacherDto findByTeacherCode(Long code) {
 
         TeacherEntity entity = teacherInfoRepository.findByCode(code);
 
-        return teacherInfoMapper.teacherEntityToTeacherInfoDto(entity);
+        return teacherInfoMapper.teacherEntityToTeacherDto(entity);
     }
 
     @Override
-    public TeacherInfoDto updateTeacherInfo(TeacherInfoDto teacherInfoDto, Long code) {
+    public TeacherDto updateTeacherInfo(TeacherDto teacherInfoDto, Long code) {
         teacherInfoDto.setEmail(generateMail(teacherInfoDto, code));
 
-        TeacherEntity teacherEntity = teacherInfoMapper.teacherInfoDtoToTeacherEntity(findByTeacherCode(code), code);
+        TeacherEntity teacherEntity = teacherInfoMapper.teacherDtoToTeacherEntity(findByTeacherCode(code), code);
         teacherEntity.setId(findTeacherId(code));
 
-        teacherInfoMapper.updateTeacherInfoFromDto(teacherInfoDto, teacherEntity);
+        teacherInfoMapper.updateTeacherFromDto(teacherInfoDto, teacherEntity);
         teacherInfoRepository.save(teacherEntity);
 
         return teacherInfoDto;

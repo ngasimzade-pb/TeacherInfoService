@@ -1,7 +1,7 @@
 package az.pashabank.teacherservice.service;
 
 import az.pashabank.teacherservice.dao.entity.Message;
-import az.pashabank.teacherservice.model.dto.TeacherInfoDto;
+import az.pashabank.teacherservice.model.dto.TeacherDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,19 +14,19 @@ import java.util.List;
 @Service
 public interface TeacherInfoService {
 
-    TeacherInfoDto save(TeacherInfoDto teacherInfoDto);
+    TeacherDto save(TeacherDto teacherInfoDto);
 
-    Long generateTeacherCode(TeacherInfoDto teacherInfoDto);
+    Long generateTeacherCode(TeacherDto teacherInfoDto);
 
-    String generateMail(TeacherInfoDto teacherInfoDto, Long teacherCode);
+    String generateMail(TeacherDto teacherInfoDto, Long teacherCode);
 
-    List<TeacherInfoDto> getAll();
+    List<TeacherDto> getAll();
 
     Message deleteById(Long id);
 
-    TeacherInfoDto findByTeacherCode(Long teacherCode);
+    TeacherDto findByTeacherCode(Long teacherCode);
 
-    TeacherInfoDto updateTeacherInfo(TeacherInfoDto teacherInfoDto, Long code);
+    TeacherDto updateTeacherInfo(TeacherDto teacherInfoDto, Long code);
 
     Long findTeacherId(Long code);
 }
